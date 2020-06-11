@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:mega",
+    "configuration": "cpu=atmega2560",
+    "port": "COM12",
+    "sketch": "SCD30_Test\\SCD30_Forced_Calibration\\SCD30_Forced_Calibration.ino"
+}
