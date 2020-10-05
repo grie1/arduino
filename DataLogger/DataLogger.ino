@@ -18,8 +18,8 @@
 #include "Adafruit_ADT7410.h"
 #include "Adafruit_SHT31.h"
 #include "Adafruit_Si7021.h"
-//#include "Adafruit_HTU21DF.h"
-#include "SparkFun_SCD30_Arduino_Library.h"
+// #include "Adafruit_HTU21DF.h"
+// #include "SparkFun_SCD30_Arduino_Library.h"
 
 
 #define SEALEVELPRESSURE_HPA (1013.25)
@@ -49,7 +49,7 @@ Adafruit_Si7021 Si7021 = Adafruit_Si7021(); // I2C 0x40, conflict with HTU21DF
 Adafruit_MPL115A2 mpl115a2;
 // Adafruit_HTS221 hts;
 // Adafruit_HTU21DF htu = Adafruit_HTU21DF(); // I2C 0x40, conflict with Si7021
-SCD30 SCD30;
+// SCD30 SCD30;
 RTC_DS3231 rtc;
 
 // reset pin not used on 4-pin OLED module
@@ -144,12 +144,17 @@ void setup() {
 
   mpl115a2.begin();
      
+/*  
+   
   if (!SCD30.begin()) {
     Serial.println("-- SCD30 not found --");
     while (1);
   }
   Serial.println("-- Found SCD30 --");
+ 
   setupSCD30();
+
+*/
 
   sdCardInit();
 
@@ -200,7 +205,7 @@ void loop() {
   readings_Si7021.setTempC(Si7021.readTemperature());
   readings_Si7021.setHumidity(Si7021.readHumidity());
   Serial.print("Si7021:  ");
-  Serial.println(readings_Si7021.getTempF());
+  Serial.print(readings_Si7021.getTempF());
   Serial.print(", Humidity: ");
   Serial.println(readings_Si7021.getHumidity());
 
@@ -212,7 +217,7 @@ void loop() {
   Serial.print(",                  Pressure: ");
   Serial.println(readings_mpl115a2.getPressure());
 
-  // SCD30
+ /* // SCD30
   if (SCD30.dataAvailable()) {
     readings_SCD30.setTempC(SCD30.getTemperature());
     readings_SCD30.setHumidity(SCD30.getHumidity());
@@ -230,12 +235,15 @@ void loop() {
   Serial.print(", CO2: ");
   Serial.println(readings_SCD30.getCO2());
 
-  float avgtemp = (readings_Si7021.getTempF() + readings_sht31.getTempF() + readings_ADT7410.getTempF() + readings_MCP9808.getTempF()) / 4;
+  */
+
+  float avgtemp = (readings_BME280.getTempF() + readings_Si7021.getTempF() + readings_sht31.getTempF() + readings_ADT7410.getTempF() + readings_MCP9808.getTempF()) / 5;
+  float avghumidity = (readings_BME280.getHumidity() + readings_sht31.getHumidity() + readings_Si7021.getHumidity()) / 3;
   Serial.print("Average Temperature: ");
   Serial.println(avgtemp);
   Serial.println();
 
-  displayParams(readings_SCD30.getTempF(), readings_SCD30.getHumidity(), readings_SCD30.getCO2());
+  displayParams(avgtemp, avghumidity, readings_SCD30.getCO2());
   
   logData();
   delay(25000);
@@ -276,7 +284,7 @@ void setupSi7021() {
   Serial.print(" Serial #"); Serial.print(Si7021.sernum_a, HEX); Serial.println(Si7021.sernum_b, HEX);
 }
 
-void setupSCD30() {
+/* void setupSCD30() {
   int SCD30MeasurementInterval = 20; // 2 to 1800 sec
   int SCD30AltitudeCompensation = 14; // altiude
   float SCD30TemperatureOffset = 1.75; // up to 5 *C
@@ -302,6 +310,7 @@ void setupSCD30() {
   Serial.print(readings_SCD30.getTempOffset());
   Serial.println(" *C");  
 }
+*/
 
 void displayParams(float T, float H, float CO2) {
 
@@ -322,7 +331,7 @@ void displayParams(float T, float H, float CO2) {
   display.print(now.month(), DEC);
   display.print('/');
   display.print(now.day(), DEC);
-  display.print(": ");
+  display.print(":");
   if(now.hour() < 10) {
        display.print("0");
   }
@@ -450,7 +459,7 @@ void logData() {
     dataString += ",";
     }
   }
-  dataFile = SD.open("log2.txt", FILE_WRITE);
+  dataFile = SD.open("log.txt", FILE_WRITE);
 
   // if the file is available, write to it:
   if (dataFile) {
