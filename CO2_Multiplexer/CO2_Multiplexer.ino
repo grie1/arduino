@@ -93,7 +93,7 @@ void loop() {
   Serial.print(", CO2: ");
   Serial.println(readings_SCD30_0.getCO2());
 
-    // SCD30_1
+  // SCD30_1
   tcaselect(1);
   if (SCD30.dataAvailable()) {
     readings_SCD30_1.setTempC(SCD30.getTemperature());
@@ -131,6 +131,8 @@ void loop() {
   Serial.print(", CO2: ");
   Serial.println(readings_SCD30_2.getCO2());
 
+  Serial.println();
+  
   // Display Info
   float avgtemp = (readings_SCD30_0.getTempF() + readings_SCD30_1.getTempF() + readings_SCD30_2.getTempF()) / 3;
   float avghumidity = (readings_SCD30_0.getHumidity() + readings_SCD30_1.getHumidity() + readings_SCD30_2.getHumidity()) / 3;
@@ -154,21 +156,17 @@ void displayParams(float T, float H, float CO2_0, float CO2_1, float CO2_2) {
   
   // Line 1
   display.setCursor(0, 0);
-  display.print("CO2_0: ");
-  display.print(CO2_0, 0); 
-
-  display.setCursor(8, 0);
-  display.print("CO2_1: ");
-  display.print(CO2_1, 0);
+  display.print("CO2: ");
+  display.print(CO2_0, 0);
+  display.print(", ");
+  display.print(CO2_1, 0); 
+  display.print(", ");
+  display.print(CO2_2, 0);
 
   // Line 2
   display.setCursor (0, 12);
   display.print(T);
   display.print("F");
-
-  display.setCursor(8, 12);
-  display.print("CO2_2: ");
-  display.print(CO2_2, 0);  
 
   // Line 3
   display.setCursor (0, 24);
